@@ -19,3 +19,13 @@ This app will export usage data without root, without ADB, and get full years.
 ├─ build.gradle.kts
 ├─ settings.gradle.kts
 ```
+
+## Build .apk
+
+`./gradlew assembleDebug`
+
+Result in here `app/build/outputs/apk/debug`
+
+## Serve generated .apk when development
+
+`python3 -m http.server -d app/build/outputs/apk/debug`
