@@ -4,3 +4,18 @@ Android app that I copy pasted from ChatGPT to make it work.
 This app will request specific access.
 This app will export usage data without root, without ADB, and get full years.
 
+ ## Structure
+
+```
+ ai-slop-usage-exporter/
+├─ app/
+│  ├─ src/main/
+│  │  ├─ AndroidManifest.xml
+│  │  ├─ java/com/example/usageexporter/
+│  │  │    ├─ MainActivity.kt
+│  │  │    ├─ data/UsageRepository.kt
+│  │  │    ├─ export/ZipExporter.kt
+│  │  ├─ res/layout/activity_main.xml
+├─ build.gradle.kts
+├─ settings.gradle.kts
+```
