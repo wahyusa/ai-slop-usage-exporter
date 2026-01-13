@@ -1,21 +1,7 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-}
-
-android {
-    namespace = "com.example.usageexporter"
-    compileSdk = 34
-
-    defaultConfig {
-        applicationId = "com.example.usageexporter"
-        minSdk = 26
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
-    }
-}
-
-dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    // Upgraded to 8.3.2 to support newer Gradle versions
+    id("com.android.application") version "8.3.2" apply false
+    
+    // Upgraded to 1.9.24 (Fixes the HasConvention error)
+    id("org.jetbrains.kotlin.android") version "1.9.24" apply false
 }
