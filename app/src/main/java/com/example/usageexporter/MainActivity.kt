@@ -5,7 +5,6 @@ import android.app.usage.UsageStatsManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Process
@@ -17,11 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
 import java.util.Calendar
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -103,6 +98,7 @@ class MainActivity : AppCompatActivity() {
                 return
             }
 
+            // 2. Build the CSV String
             val sb = StringBuilder()
             sb.append("Package Name, Last Time Used, Total Time Foreground (ms)\n")
             for (stats in usageStatsList) {
@@ -111,13 +107,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // 2. Save to Downloads folder using MediaStore (Works on Android 10+)
-            val fileName = "usage_stats_${System.currentTimeMillis()}.zip"
+            // 3. Save to Downloads/UsageExporter/
+            val folderName = "UsageExporter"
+            val fileName = "usage_stats_${System.currentTimeMillis()}.csv"
             
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                put(MediaStore.MediaColumns.MIME_TYPE, "application/zip")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                put(MediaStore.MediaColumns.MIME_TYPE, "text/csv")
+                // THIS LINE creates the subfolder
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + File.separator + folderName)
             }
 
             val resolver = contentResolver
@@ -126,20 +124,16 @@ class MainActivity : AppCompatActivity() {
             if (uri != null) {
                 val outputStream = resolver.openOutputStream(uri)
                 if (outputStream != null) {
-                    val zos = ZipOutputStream(outputStream)
-                    val entry = ZipEntry("usage_stats.csv")
-                    zos.putNextEntry(entry)
-                    zos.write(sb.toString().toByteArray())
-                    zos.closeEntry()
-                    zos.close()
+                    outputStream.write(sb.toString().toByteArray())
+                    outputStream.close()
                     
-                    statusText.text = "Saved to Downloads folder!\nFile: $fileName"
-                    Toast.makeText(this, "Saved to Downloads!", Toast.LENGTH_LONG).show()
+                    statusText.text = "Saved to Downloads/$folderName/\nFile: $fileName"
+                    Toast.makeText(this, "Saved to Downloads/$folderName/", Toast.LENGTH_LONG).show()
                 } else {
                     statusText.text = "Failed to open output stream."
                 }
             } else {
-                statusText.text = "Failed to create file in Downloads."
+                statusText.text = "Failed to create file. (Check if folder exists?)"
             }
 
         } catch (e: Exception) {
